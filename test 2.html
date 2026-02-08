@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Coffre Candy Infini 🎁🍬</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    background: linear-gradient(180deg,#a0d8f1,#fce4ec);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1500px;
+  }
+
+  .scene {
+    width: 400px;
+    height: 400px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 2s ease;
+  }
+
+  .coffre {
+    width: 200px;
+    height: 120px;
+    background: #8b4513;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-style: preserve-3d;
+    border-radius: 10px;
+  }
+
+  .coffre .lid {
+    width: 200px;
+    height: 50px;
+    background: #a0522d;
+    position: absolute;
+    top: -50px;
+    transform-origin: bottom center;
+    transition: transform 2s ease;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .lock {
+    font-size: 60px;
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: transform 1s ease, top 1s ease;
+    cursor: pointer;
+  }
+
+  .lock-code {
+    display: flex;
+    gap: 10px;
+    margin-top: 100px;
+    justify-content: center;
+  }
+
+  .wheel {
+    width: 50px;
+    height: 70px;
+    background: #fff;
+    border: 3px solid #d32f2f;
+    border-radius: 8px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .candy {
+    position: absolute;
+    font-size: 24px;
+    animation: fall linear forwards;
+    z-index: 999;
+  }
+
+  @keyframes fall {
+    0% { top: -50px; transform: rotate(0deg);}
+    100% { top: 110%; transform: rotate(360deg);}
+  }
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+  <div class="coffre" id="coffre">
+    <div class="lid" id="lid"></div>
+  </div>
+
+  <div class="lock" id="lock">🔒</div>
+
+  <div class="lock-code">
+    <div class="wheel" id="wheel1" onclick="increment(1)">0</div>
+    <div class="wheel" id="wheel2" onclick="increment(2)">0</div>
+    <div class="wheel" id="wheel3" onclick="increment(3)">0</div>
+  </div>
+
+  <button onclick="verifierCode()" style="margin-top:20px;font-size:20px;">Ouvrir</button>
+</div>
+
+<script>
+const codeSecret = [7,3,5];
+let wheels = [0,0,0];
+let candyInterval;
+
+function increment(num){
+  wheels[num-1] = (wheels[num-1]+1) % 10;
+  document.getElementById('wheel'+num).textContent = wheels[num-1];
+}
+
+function verifierCode(){
+  if(wheels[0]===codeSecret[0] && wheels[1]===codeSecret[1] && wheels[2]===codeSecret[2]){
+    // Zoom sur le coffre
+    document.getElementById('scene').style.transform = "scale(1.2)";
+
+    // Cadenas tombe
+    const lock = document.getElementById('lock');
+    lock.style.top = "300px";
+    lock.style.transform = "translateX(-50%) rotate(720deg)";
+
+    // Coffre s’ouvre
+    const lid = document.getElementById('lid');
+    setTimeout(()=>{ lid.style.transform = "rotateX(-120deg)"; }, 1500);
+
+    // Lancer la pluie infinie de bonbons
+    setTimeout(()=>{ lancerCandyInfini(); }, 1500);
+  }
+}
+
+// Bonbons en boucle infinie
+function lancerCandyInfini() {
+  candyInterval = setInterval(()=>{
+    const candy = document.createElement("div");
+    candy.className = "candy";
+    candy.textContent = ["🍬","🍭","🍫"][Math.floor(Math.random()*3)];
+    candy.style.left = Math.random()*window.innerWidth + "px";
+    candy.style.fontSize = (20 + Math.random()*30) + "px";
+    candy.style.animationDuration = (3 + Math.random()*3) + "s";
+    document.body.appendChild(candy);
+    // On laisse les bonbons disparaître après animation
+    setTimeout(()=>{ candy.remove(); }, 6000);
+  }, 150); // un nouveau candy toutes les 150ms
+}
+</script>
+
+</body>
+</html>

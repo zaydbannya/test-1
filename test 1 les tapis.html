@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Défi du Tapis Marocain 🧵</title>
+  <style>
+    body { font-family: Arial; background: #fff3e0; text-align: center; color: #4e342e; padding: 20px; }
+    h1 { color: #6d4c41; }
+    iframe { margin: 20px 0; border-radius: 12px; }
+    .question { margin: 25px; }
+    button { padding: 10px 18px; margin: 6px; border-radius: 8px; cursor: pointer; background: #8d6e63; color: white; font-weight: bold; transition: 0.3s; border: none;}
+    button:hover { transform: scale(1.05); }
+    .effet-correct { animation: pop 0.4s ease; background: #ffd54f !important; color: #4e342e; }
+    @keyframes pop {0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);} }
+    #progressBarContainer { width: 300px; height: 25px; background: #d7ccc8; margin: 20px auto; border-radius: 20px; overflow: hidden;}
+    #progressBar { height: 100%; width: 0%; background: #8d6e63; transition: width 0.4s ease;}
+    #treasure { font-size: 80px; margin-top: 40px; transition: 0.5s;}
+    #codeDisplay { font-size: 28px; font-weight: bold; margin-top: 20px; display: none; color: #d32f2f; }
+    .opened { transform: scale(1.2) rotate(5deg);}
+  </style>
+</head>
+<body>
+<h1>🧵 Défi du Tapis Marocain & Trésor</h1>
+<p>Regarde la vidéo puis réponds aux 10 questions pour ouvrir le coffre !</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zPGzOVZ3K1g" title="Tapis marocain" frameborder="0" allowfullscreen></iframe>
+
+<div id="progressBarContainer"><div id="progressBar"></div></div>
+<div id="quiz"></div>
+<div id="treasure">🔒</div>
+<div id="codeDisplay">🎉 Deuxième chiffre secret : <span id="secretCode"></span></div>
+
+<script>
+const questions = [
+  {q:"1. Quelle est la matière principale d'un tapis marocain ?", options:["La laine","Le plastique"], correct:"La laine"},
+  {q:"2. Les motifs des tapis marocains sont souvent :", options:["Géométriques","Photographiques"], correct:"Géométriques"},
+  {q:"3. La fabrication d'un tapis marocain se fait :", options:["À la main","À la machine"], correct:"À la main"},
+  {q:"4. Les tapis servent principalement à :", options:["Décorer et couvrir le sol","Cuisiner"], correct:"Décorer et couvrir le sol"},
+  {q:"5. Chaque tapis peut représenter :", options:["Une tribu ou une région","Une recette"], correct:"Une tribu ou une région"},
+  {q:"6. Les couleurs des tapis marocains sont souvent :", options:["Vives et variées","Uniquement noires"], correct:"Vives et variées"},
+  {q:"7. Les tapis marocains peuvent être utilisés pour :", options:["Dormir ou prier","Voler"], correct:"Dormir ou prier"},
+  {q:"8. Les motifs symbolisent souvent :", options:["Histoire et culture","Recettes de cuisine"], correct:"Histoire et culture"},
+  {q:"9. Les tapis sont traditionnellement fabriqués par :", options:["Des artisans","Des robots"], correct:"Des artisans"},
+  {q:"10. Où trouve-t-on généralement les tapis marocains ?", options:["Dans les maisons et souks","Dans la jungle"], correct:"Dans les maisons et souks"}
+];
+
+let score=0, answered=[];
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+const quizContainer=document.getElementById("quiz");
+questions.forEach((item,index)=>{
+  const div=document.createElement("div");
+  div.classList.add("question"); div.dataset.index=index;
+  const p=document.createElement("p"); p.textContent=item.q; div.appendChild(p);
+  const shuffled=shuffle([...item.options]);
+  shuffled.forEach(opt=>{
+    const btn=document.createElement("button"); btn.textContent=opt;
+    btn.onclick=()=>answerQuestion(btn,opt); div.appendChild(btn);
+  });
+  quizContainer.appendChild(div);
+});
+
+function answerQuestion(button,value){
+  const idx=parseInt(button.closest(".question").dataset.index);
+  if(answered[idx]) return;
+  if(value===questions[idx].correct){
+    score++;
+    answered[idx]=true;
+    button.classList.add("effet-correct");
+    updateProgress();
+  } else {
+    button.style.background="#c62828"; button.style.color="white";
+  }
+  if(score===questions.length) openTreasure();
+}
+
+function updateProgress(){
+  document.getElementById("progressBar").style.width=(score/questions.length*100)+"%";
+}
+
+function openTreasure(){
+  const chest=document.getElementById("treasure"); chest.textContent="🪙"; chest.classList.add("opened");
+  document.getElementById("secretCode").textContent=3; 
+  document.getElementById("codeDisplay").style.display="block";
+}
+</script>
+</body>
+</html>
